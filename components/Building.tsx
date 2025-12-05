@@ -3,11 +3,9 @@
 // components/Building.tsx
 'use client';
 
-import React, { useState, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
+import React, { useState } from 'react';
 import { Html, useCursor, useGLTF } from '@react-three/drei';
 import { FloorData } from '@/lib/data';
-import * as THREE from 'three';
 
 interface BuildingProps {
     modelPath: string;
@@ -50,22 +48,12 @@ interface FloorHitboxProps {
 }
 
 function FloorHitbox({ data, position, isHovered, onHover, onClick }: FloorHitboxProps) {
-    const meshRef = useRef<THREE.Mesh>(null);
     useCursor(isHovered);
-
-    useFrame((state, delta) => {
-        if (meshRef.current) {
-            const targetOpacity = isHovered ? 0.3 : 0;
-            // @ts-ignore
-            meshRef.current.material.opacity = THREE.MathUtils.lerp(meshRef.current.material.opacity, targetOpacity, delta * 10);
-        }
-    });
 
     return (
         <group position={position}>
-            {/* Invisible Hitbox Mesh */}
+            {/* Invisible Hitbox Mesh for interaction */}
             <mesh
-                ref={meshRef}
                 onPointerOver={(e) => {
                     e.stopPropagation();
                     onHover(true);
@@ -81,12 +69,39 @@ function FloorHitbox({ data, position, isHovered, onHover, onClick }: FloorHitbo
             >
                 <boxGeometry args={[6, 2.2, 6]} />
                 <meshStandardMaterial
-                    color="#3b82f6"
                     transparent
                     opacity={0}
                     depthWrite={false}
                 />
             </mesh>
+
+            {/* Subtle edge indicator - only visible on hover */}
+            {isHovered && (
+                <group>
+                    {/* Left edge bar */}
+                    <mesh position={[-3.1, 0, 0]}>
+                        <boxGeometry args={[0.15, 2.3, 6.2]} />
+                        <meshStandardMaterial
+                            color="#10b981"
+                            emissive="#10b981"
+                            emissiveIntensity={0.5}
+                            transparent
+                            opacity={0.9}
+                        />
+                    </mesh>
+                    {/* Right edge bar */}
+                    <mesh position={[3.1, 0, 0]}>
+                        <boxGeometry args={[0.15, 2.3, 6.2]} />
+                        <meshStandardMaterial
+                            color="#10b981"
+                            emissive="#10b981"
+                            emissiveIntensity={0.5}
+                            transparent
+                            opacity={0.9}
+                        />
+                    </mesh>
+                </group>
+            )}
 
             {/* Tooltip on Hover */}
             {isHovered && (
