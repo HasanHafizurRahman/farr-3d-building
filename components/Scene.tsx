@@ -55,8 +55,11 @@ function InnerScene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
             <OrbitControls
                 ref={controlsRef}
                 enablePan={false}
-                minPolarAngle={Math.PI / 2}
+                enableZoom={true}
+                minPolarAngle={0.1}
                 maxPolarAngle={Math.PI / 2}
+                minDistance={15}
+                maxDistance={80}
             />
         </>
     );
@@ -65,7 +68,7 @@ function InnerScene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
 export default function Scene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
     return (
         <div className="w-full h-screen bg-gray-50">
-            <Canvas camera={{ position: [0, 10, 20], fov: 45 }} dpr={[1, 2]} shadows performance={{ min: 0.5 }}>
+            <Canvas camera={{ position: [15, 25, 45], fov: 45 }} dpr={[1, 2]} shadows performance={{ min: 0.5 }}>
                 <InnerScene buildingModelPath={buildingModelPath} floors={floors} onFloorClick={onFloorClick} />
             </Canvas>
 

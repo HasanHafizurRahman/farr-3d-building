@@ -32,7 +32,7 @@ export default async function BuildingPage({
                     <Link href="/" className="flex items-center gap-3">
                         <div className="rounded-md bg-gradient-to-br from-black to-gray-700 p-2 text-white font-bold">EP</div>
                         <div className="leading-tight">
-                            <div className="text-sm font-extrabold text-black">Elite Properties</div>
+                            <div className="text-sm font-extrabold text-black">Farr Builders and Landmarks Ltd</div>
                             <div className="text-xs text-gray-500">Premium Real Estate Solutions</div>
                         </div>
                     </Link>
