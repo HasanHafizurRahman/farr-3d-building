@@ -1,5 +1,3 @@
-// Update the Building component to handle different models
-
 // components/Building.tsx
 'use client';
 
@@ -23,12 +21,12 @@ export default function Building({ modelPath, floors, onFloorClick }: BuildingPr
             <primitive object={scene} scale={0.5} />
 
             {/* Interactive Hitboxes */}
-            <group position={[0, 2, 0]}>
+            <group position={[0, -1.5, 0]}>
                 {floors.map((floor, index) => (
                     <FloorHitbox
                         key={floor.id}
                         data={floor}
-                        position={[0, index * 2.5, 0]}
+                        position={[0, index * 1.5, 0]}
                         isHovered={hoveredFloor === floor.id}
                         onHover={(isHovering) => setHoveredFloor(isHovering ? floor.id : null)}
                         onClick={() => onFloorClick(floor)}
@@ -67,7 +65,7 @@ function FloorHitbox({ data, position, isHovered, onHover, onClick }: FloorHitbo
                     onClick();
                 }}
             >
-                <boxGeometry args={[6, 2.2, 6]} />
+                <boxGeometry args={[3.5, 1.3, 3.5]} />
                 <meshStandardMaterial
                     transparent
                     opacity={0}
@@ -79,25 +77,25 @@ function FloorHitbox({ data, position, isHovered, onHover, onClick }: FloorHitbo
             {isHovered && (
                 <group>
                     {/* Left edge bar */}
-                    <mesh position={[-3.1, 0, 0]}>
-                        <boxGeometry args={[0.15, 2.3, 6.2]} />
+                    <mesh position={[-1.8, 0, 0]}>
+                        <boxGeometry args={[0.08, 1.35, 3.6]} />
                         <meshStandardMaterial
-                            color="#10b981"
-                            emissive="#10b981"
-                            emissiveIntensity={0.5}
+                            color="#ffffff"
+                            emissive="#ffffff"
+                            emissiveIntensity={0.8}
                             transparent
-                            opacity={0.9}
+                            opacity={0.95}
                         />
                     </mesh>
                     {/* Right edge bar */}
-                    <mesh position={[3.1, 0, 0]}>
-                        <boxGeometry args={[0.15, 2.3, 6.2]} />
+                    <mesh position={[1.8, 0, 0]}>
+                        <boxGeometry args={[0.08, 1.35, 3.6]} />
                         <meshStandardMaterial
-                            color="#10b981"
-                            emissive="#10b981"
-                            emissiveIntensity={0.5}
+                            color="#ffffff"
+                            emissive="#ffffff"
+                            emissiveIntensity={0.8}
                             transparent
-                            opacity={0.9}
+                            opacity={0.95}
                         />
                     </mesh>
                 </group>
@@ -105,7 +103,7 @@ function FloorHitbox({ data, position, isHovered, onHover, onClick }: FloorHitbo
 
             {/* Tooltip on Hover */}
             {isHovered && (
-                <Html position={[3.5, 0, 0]} center distanceFactor={10} style={{ pointerEvents: 'none' }}>
+                <Html position={[2.5, 0, 0]} center distanceFactor={10} style={{ pointerEvents: 'none' }}>
                     <div className="bg-white/95 backdrop-blur-xl p-4 rounded-2xl shadow-2xl border w-96 transform transition-all duration-300 scale-100 origin-left">
                         {/* Map Image */}
                         <div className="relative w-full h-40 rounded-xl overflow-hidden mb-3 bg-gray-100">
