@@ -21,7 +21,7 @@ export default function Building({ modelPath, floors, onFloorClick }: BuildingPr
             <primitive object={scene} scale={0.5} />
 
             {/* Interactive Hitboxes */}
-            <group position={[0, -1.5, 0]}>
+            <group position={[0, 3, 0]}>
                 {floors.map((floor, index) => (
                     <FloorHitbox
                         key={floor.id}
