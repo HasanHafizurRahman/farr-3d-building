@@ -1,73 +1,98 @@
 // app/page.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Scene from '@/components/Scene';
-import { buildingsData, BuildingData, FloorData } from '@/lib/data';
+import { buildingsData, FloorData } from '@/lib/data';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import Gallery1 from '../public/assets/gallery-1.jpg';
-import Gallery2 from '../public/assets/gallery-2.jpg';
-import Gallery3 from '../public/assets/gallery-3.jpg';
-import { Building2, MapPin, Calendar, Layers, Sparkles, ArrowRight, Phone, Mail } from 'lucide-react';
+import { MapPin, Calendar, Layers, ArrowRight, Phone, Mail, Star, Shield, Award, Gem, ChevronDown, Linkedin, Twitter, Instagram, Facebook } from 'lucide-react';
 
 export default function Home() {
   const router = useRouter();
-  const [selectedBuildingId, setSelectedBuildingId] = useState(buildingsData[0].id);
+  const [selectedBuildingId] = useState(buildingsData[0].id);
   const selectedBuilding = buildingsData.find(b => b.id === selectedBuildingId) || buildingsData[0];
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   const handleFloorClick = (floor: FloorData) => {
     router.push(`/floor/${floor.id}`);
   };
 
+  const featureIcons = [Star, Shield, Award, Gem];
+
   return (
-    <main className="min-h-screen w-full bg-white text-black">
-      {/* Animated Background Pattern */}
-      <div className="fixed inset-0 opacity-[0.02] pointer-events-none">
+    <main className="min-h-screen w-full bg-white text-black overflow-hidden">
+      {/* Animated Background Orbs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-amber-100/40 to-orange-100/20 blur-3xl animate-orb-1" />
+        <div className="absolute top-1/2 -left-40 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-gray-100/60 to-slate-100/30 blur-3xl animate-orb-2" />
+        <div className="absolute -bottom-40 right-1/3 w-[400px] h-[400px] rounded-full bg-gradient-to-br from-amber-50/30 to-yellow-50/20 blur-3xl animate-float-slow" />
+      </div>
+
+      {/* Subtle Grid Pattern */}
+      <div className="fixed inset-0 opacity-[0.015] pointer-events-none">
         <div className="absolute inset-0" style={{
-          backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, black 2px, black 4px),
-                           repeating-linear-gradient(90deg, transparent, transparent 2px, black 2px, black 4px)`,
-          backgroundSize: '100px 100px'
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+                           linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)`,
+          backgroundSize: '60px 60px'
         }} />
       </div>
 
       {/* Premium Header */}
-      <header className="fixed inset-x-0 top-0 z-50 bg-white/80 backdrop-blur-2xl border-b border-black/10">
-        <div className="max-w-[1440px] mx-auto flex items-center justify-between px-6 sm:px-12 py-5">
-          <div className="flex items-center gap-4">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-black to-gray-600 rounded-xl blur-sm group-hover:blur-md transition-all" />
-              <div className="relative rounded-xl bg-gradient-to-br from-black via-gray-800 to-gray-600 p-3 text-white font-black text-lg">
-                EP
+      <header className="fixed inset-x-0 top-0 z-50 glass border-b border-black/5">
+        <div className="max-w-[1440px] mx-auto flex items-center justify-between px-6 sm:px-12 py-4">
+          <div className={`flex items-center gap-4 transition-all duration-700 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
+            <div className="relative group cursor-pointer">
+              <div className="absolute -inset-1 bg-gradient-to-br from-amber-400/30 to-amber-600/30 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-all duration-500" />
+              <div className="relative rounded-xl bg-gradient-to-br from-black via-gray-900 to-gray-800 p-3.5 text-white font-black text-xl shadow-xl">
+                FB
               </div>
             </div>
             <div className="leading-tight">
-              <div className="text-lg font-black tracking-tight bg-gradient-to-r from-black to-gray-600 bg-clip-text text-transparent">
-                Farr Builders and Landmarks LTD
+              <div className="text-xl font-black tracking-tight">
+                <span className="bg-gradient-to-r from-black via-gray-700 to-gray-500 bg-clip-text text-transparent">
+                  Farr Builders
+                </span>
               </div>
-              <div className="text-xs text-gray-500 font-medium tracking-wide">Premium Real Estate Solutions</div>
+              <div className="text-xs text-gray-400 font-medium tracking-widest uppercase">Premium Real Estate</div>
             </div>
           </div>
-          <div className="hidden md:flex items-center gap-4">
-            <button className="text-gray-600 hover:text-black transition-colors font-medium">
-              Properties
-            </button>
-            <button className="text-gray-600 hover:text-black transition-colors font-medium">
+
+          <nav className={`hidden md:flex items-center gap-8 transition-all duration-700 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-5'}`}>
+            <a href="#features" className="relative text-gray-500 hover:text-black transition-colors font-medium group">
+              Features
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-500 to-amber-600 group-hover:w-full transition-all duration-300" />
+            </a>
+            <a href="#about" className="relative text-gray-500 hover:text-black transition-colors font-medium group">
               About
-            </button>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-500 to-amber-600 group-hover:w-full transition-all duration-300" />
+            </a>
+            <a href="#contact" className="relative text-gray-500 hover:text-black transition-colors font-medium group">
+              Contact
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-500 to-amber-600 group-hover:w-full transition-all duration-300" />
+            </a>
+          </nav>
+
+          <div className={`hidden md:flex items-center gap-4 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
             <button
               onClick={() => router.push('/contact')}
-              className="relative group overflow-hidden bg-black text-white px-6 py-2.5 rounded-lg font-bold transition-all hover:shadow-[0_0_30px_rgba(0,0,0,0.3)]"
+              className="relative group overflow-hidden bg-gradient-to-r from-black via-gray-900 to-black text-white px-7 py-3 rounded-xl font-bold transition-all hover:shadow-[0_0_40px_rgba(0,0,0,0.3)] hover-lift"
             >
-              <span className="relative z-10">Schedule Viewing</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-black opacity-0 group-hover:opacity-100 transition-opacity" />
+              <span className="relative z-10 flex items-center gap-2">
+                <Phone className="w-4 h-4" />
+                Schedule Tour
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-amber-600/20 to-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </button>
           </div>
         </div>
       </header>
 
-      {/* 3D Building Viewer with Enhanced Overlay */}
-      <section className="relative h-screen w-full mt-20">
+      {/* Hero Section - 3D Building Viewer */}
+      <section className="relative h-screen w-full pt-20">
         <div className="absolute inset-0">
           <Scene
             buildingModelPath={selectedBuilding.modelPath}
@@ -76,212 +101,283 @@ export default function Home() {
           />
         </div>
 
-        {/* Premium Building Information Card */}
-        <div className="absolute left-6 bottom-6 z-30 max-w-md">
+        {/* Premium Floating Building Card */}
+        <div className={`absolute left-6 lg:left-12 bottom-8 z-30 max-w-md transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}>
           <div className="relative group">
-            {/* Glow Effect */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-black/20 to-gray-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            {/* Animated Glow */}
+            <div className="absolute -inset-2 bg-gradient-to-r from-amber-500/20 via-amber-400/10 to-amber-500/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700 animate-pulse-glow" />
 
-            <div className="relative bg-white/90 backdrop-blur-2xl border border-black/20 rounded-3xl p-8 shadow-2xl">
-              <div className="flex items-start justify-between mb-4">
-                <h2 className="text-3xl font-black bg-gradient-to-r from-black to-gray-600 bg-clip-text text-transparent">
-                  {selectedBuilding.name}
-                </h2>
-                <div className="bg-black/10 backdrop-blur-xl px-3 py-1 rounded-full">
-                  <span className="text-xs font-bold text-black">{selectedBuilding.totalFloors} Floors</span>
+            <div className="relative glass rounded-3xl p-8 shadow-2xl border border-white/50 hover:border-amber-200/50 transition-all duration-500">
+              {/* Premium Badge */}
+              <div className="absolute -top-3 -right-3">
+                <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg animate-float">
+                  ✦ Premium
                 </div>
               </div>
 
-              <p className="text-gray-600 mb-6 leading-relaxed">{selectedBuilding.description}</p>
-
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center gap-3 text-sm">
-                  <div className="w-10 h-10 bg-black/5 rounded-xl flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-black" />
-                  </div>
-                  <div>
-                    <div className="text-gray-500 text-xs">Location</div>
-                    <div className="font-semibold text-black">{selectedBuilding.location}</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 text-sm">
-                  <div className="w-10 h-10 bg-black/5 rounded-xl flex items-center justify-center">
-                    <Calendar className="w-5 h-5 text-black" />
-                  </div>
-                  <div>
-                    <div className="text-gray-500 text-xs">Status</div>
-                    <div className="font-semibold text-black">{selectedBuilding.possession}</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 text-sm">
-                  <div className="w-10 h-10 bg-black/5 rounded-xl flex items-center justify-center">
-                    <Layers className="w-5 h-5 text-black" />
-                  </div>
-                  <div>
-                    <div className="text-gray-500 text-xs">Total Floors</div>
-                    <div className="font-semibold text-black">{selectedBuilding.totalFloors} Levels</div>
-                  </div>
+              <div className="flex items-start justify-between mb-5">
+                <div>
+                  <h2 className="text-3xl font-black mb-1">
+                    <span className="bg-gradient-to-r from-black via-gray-800 to-gray-600 bg-clip-text text-transparent">
+                      {selectedBuilding.name}
+                    </span>
+                  </h2>
+                  <p className="text-amber-600 font-semibold text-sm tracking-wide">Exclusive Residences</p>
                 </div>
               </div>
 
-              <div className="text-center py-3 px-4 bg-black/5 rounded-xl border border-black/10">
-                <p className="text-sm text-gray-600 font-medium">Click on any floor in the 3D model to view details</p>
+              <p className="text-gray-500 mb-6 leading-relaxed text-sm">{selectedBuilding.description}</p>
+
+              {/* Info Grid */}
+              <div className="grid grid-cols-3 gap-3 mb-6">
+                <div className="bg-black/5 rounded-xl p-3 text-center hover:bg-black/10 transition-colors">
+                  <MapPin className="w-5 h-5 mx-auto mb-1 text-amber-600" />
+                  <div className="text-xs text-gray-500 mb-0.5">Location</div>
+                  <div className="font-bold text-sm text-black truncate">{selectedBuilding.location.split(',')[0]}</div>
+                </div>
+                <div className="bg-black/5 rounded-xl p-3 text-center hover:bg-black/10 transition-colors">
+                  <Calendar className="w-5 h-5 mx-auto mb-1 text-amber-600" />
+                  <div className="text-xs text-gray-500 mb-0.5">Possession</div>
+                  <div className="font-bold text-sm text-black">{selectedBuilding.possession}</div>
+                </div>
+                <div className="bg-black/5 rounded-xl p-3 text-center hover:bg-black/10 transition-colors">
+                  <Layers className="w-5 h-5 mx-auto mb-1 text-amber-600" />
+                  <div className="text-xs text-gray-500 mb-0.5">Floors</div>
+                  <div className="font-bold text-sm text-black">{selectedBuilding.totalFloors} Levels</div>
+                </div>
+              </div>
+
+              {/* CTA Hint */}
+              <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200/50">
+                <p className="text-sm text-amber-800 font-medium flex items-center gap-2">
+                  <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+                  Hover over floors in the 3D model to explore
+                </p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 hidden lg:block">
-          <div className="flex flex-col items-center gap-2 text-black/60 animate-bounce">
-            <span className="text-xs font-medium tracking-wider">SCROLL TO EXPLORE</span>
-            <div className="w-6 h-10 border-2 border-black/30 rounded-full flex items-start justify-center p-2">
-              <div className="w-1 h-2 bg-black/60 rounded-full" />
-            </div>
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 hidden lg:flex flex-col items-center gap-3">
+          <span className="text-xs font-bold tracking-[0.2em] text-gray-400 uppercase">Scroll</span>
+          <div className="w-8 h-14 border-2 border-black/20 rounded-full flex items-start justify-center p-2 hover:border-amber-500/50 transition-colors">
+            <ChevronDown className="w-4 h-4 text-gray-400 animate-bounce" />
           </div>
         </div>
       </section>
 
-      {/* Building Features - Premium Grid */}
-      <section id="features" className="max-w-[1440px] mx-auto px-6 sm:px-12 py-24">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl sm:text-5xl font-black mb-4 bg-gradient-to-r from-black to-gray-500 bg-clip-text text-transparent">
-            Exceptional Features
-          </h2>
-          <p className="text-gray-500 text-lg">Designed for the discerning few</p>
-        </div>
+      {/* Features Section - Premium Grid */}
+      <section id="features" className="relative py-32 overflow-hidden">
+        {/* Background decorations */}
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-300/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-amber-50/30 to-transparent" />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {selectedBuilding.features.map((feature, index) => (
-            <div
-              key={index}
-              className="group relative overflow-hidden bg-black/5 backdrop-blur-xl p-8 rounded-3xl border border-black/10 hover:border-black/30 transition-all duration-500 hover:shadow-[0_0_50px_rgba(0,0,0,0.1)]"
-            >
-              {/* Hover Gradient */}
-              <div className="absolute inset-0 bg-gradient-to-br from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-              <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-br from-black to-gray-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                  <span className="text-white font-black text-2xl">{index + 1}</span>
-                </div>
-                <h3 className="text-xl font-bold text-black mb-2">{feature}</h3>
-                <div className="w-12 h-1 bg-gradient-to-r from-black to-transparent rounded-full" />
-              </div>
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-12 relative">
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+              <Star className="w-4 h-4" />
+              World-Class Amenities
             </div>
-          ))}
+            <h2 className="text-5xl sm:text-6xl font-black mb-6">
+              <span className="bg-gradient-to-r from-black via-gray-700 to-gray-500 bg-clip-text text-transparent">
+                Exceptional
+              </span>
+              <br />
+              <span className="text-amber-600">Features</span>
+            </h2>
+            <p className="text-gray-500 text-lg max-w-2xl mx-auto">
+              Every detail meticulously crafted for those who appreciate the finest things in life
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {selectedBuilding.features.map((feature, index) => {
+              const IconComponent = featureIcons[index % featureIcons.length];
+              return (
+                <div
+                  key={index}
+                  className="group relative hover-lift"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <div className="absolute -inset-0.5 bg-gradient-to-br from-amber-400/20 to-orange-400/20 rounded-3xl opacity-0 group-hover:opacity-100 blur transition-all duration-500" />
+
+                  <div className="relative h-full glass rounded-3xl p-8 border border-black/5 group-hover:border-amber-200/50 transition-all duration-500">
+                    {/* Number badge */}
+                    <div className="absolute top-4 right-4 text-6xl font-black text-black/[0.03] group-hover:text-amber-500/10 transition-colors">
+                      0{index + 1}
+                    </div>
+
+                    <div className="relative">
+                      <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+                        <IconComponent className="w-7 h-7 text-white" />
+                      </div>
+                      <h3 className="text-xl font-bold text-black mb-3">{feature}</h3>
+                      <div className="w-12 h-1 bg-gradient-to-r from-amber-500 to-transparent rounded-full group-hover:w-20 transition-all duration-500" />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      {/* Premium CTA Section */}
-      <section className="relative py-32 overflow-hidden bg-gray-50">
-        {/* Background Elements */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-black/5 rounded-full blur-3xl" />
+      {/* Stats Section */}
+      <section className="py-20 bg-gradient-to-r from-black via-gray-900 to-black relative overflow-hidden">
+        {/* Animated pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+            backgroundSize: '40px 40px'
+          }} />
+        </div>
+
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-12 relative">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { value: '50+', label: 'Premium Properties', icon: Gem },
+              { value: '1000+', label: 'Happy Families', icon: Star },
+              { value: '15+', label: 'Years Excellence', icon: Award },
+              { value: '100%', label: 'Client Satisfaction', icon: Shield },
+            ].map((stat, index) => (
+              <div key={index} className="text-center group">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-white/10 rounded-xl mb-4 group-hover:bg-amber-500/20 transition-colors">
+                  <stat.icon className="w-6 h-6 text-amber-400" />
+                </div>
+                <div className="text-4xl md:text-5xl font-black text-white mb-2 stat-number">{stat.value}</div>
+                <div className="text-gray-400 text-sm font-medium">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section id="contact" className="relative py-32 overflow-hidden">
+        {/* Premium background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-50/50 via-white to-orange-50/30" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-gradient-to-br from-amber-100/30 to-transparent rounded-full blur-3xl" />
 
         <div className="relative max-w-[1440px] mx-auto px-6 sm:px-12 text-center">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-5xl sm:text-6xl font-black mb-6 leading-tight">
-              <span className="bg-gradient-to-r from-black via-gray-800 to-gray-500 bg-clip-text text-transparent">
-                Ready to Experience
+            <div className="inline-flex items-center gap-2 bg-black text-white px-5 py-2 rounded-full text-sm font-semibold mb-8">
+              <Phone className="w-4 h-4" />
+              Get In Touch
+            </div>
+
+            <h2 className="text-5xl sm:text-7xl font-black mb-8 leading-tight">
+              <span className="bg-gradient-to-r from-black via-gray-700 to-gray-500 bg-clip-text text-transparent">
+                Ready to Find Your
               </span>
               <br />
-              <span className="text-black">{selectedBuilding.name}?</span>
+              <span className="text-gradient-gold">Dream Home?</span>
             </h2>
 
-            <p className="text-xl text-gray-600 mb-12 leading-relaxed max-w-2xl mx-auto">
-              Schedule a personalized tour to experience these premium properties in person.
-              Our team is ready to assist you with all your real estate needs.
+            <p className="text-xl text-gray-500 mb-12 leading-relaxed max-w-2xl mx-auto">
+              Schedule a personalized tour and experience luxury living at {selectedBuilding.name}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <button
                 onClick={() => router.push('/contact')}
-                className="group relative overflow-hidden bg-black text-white px-10 py-5 rounded-2xl font-bold text-lg transition-all hover:shadow-[0_0_50px_rgba(0,0,0,0.4)] flex items-center gap-3"
+                className="group relative overflow-hidden bg-gradient-to-r from-amber-500 via-amber-600 to-orange-500 text-white px-10 py-5 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl hover:shadow-amber-500/25 transition-all duration-500 hover-lift"
               >
-                <Phone className="w-5 h-5" />
-                <span>Schedule Viewing</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <span className="relative z-10 flex items-center gap-3">
+                  <Phone className="w-5 h-5" />
+                  Schedule Private Tour
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+                </span>
               </button>
 
-              <button className="group bg-black/5 backdrop-blur-xl hover:bg-black/10 text-black font-bold px-10 py-5 rounded-2xl transition-all border-2 border-black/20 hover:border-black/40 flex items-center gap-3">
+              <button className="group bg-white hover:bg-gray-50 text-black font-bold px-10 py-5 rounded-2xl transition-all border-2 border-black/10 hover:border-black/20 flex items-center gap-3 shadow-lg hover-lift">
                 <Mail className="w-5 h-5" />
                 <span>Download Brochure</span>
               </button>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 mt-20 max-w-3xl mx-auto">
-              <div className="text-center">
-                <div className="text-4xl font-black text-black mb-2">50+</div>
-                <div className="text-gray-500 text-sm font-medium">Premium Properties</div>
-              </div>
-              <div className="text-center border-x border-black/10">
-                <div className="text-4xl font-black text-black mb-2">1000+</div>
-                <div className="text-gray-500 text-sm font-medium">Happy Clients</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-black text-black mb-2">15+</div>
-                <div className="text-gray-500 text-sm font-medium">Years Experience</div>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Premium Footer */}
-      <footer className="border-t border-black/10 py-16 bg-white/50 backdrop-blur-2xl">
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+      <footer className="relative bg-black text-white py-20 overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
+            backgroundSize: '32px 32px'
+          }} />
+        </div>
+
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-12 relative">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             {/* Brand */}
             <div className="md:col-span-2">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="rounded-xl bg-gradient-to-br from-black via-gray-800 to-gray-600 p-3 text-white font-black text-lg">
-                  EP
+              <div className="flex items-center gap-4 mb-6">
+                <div className="rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 p-3.5 text-white font-black text-xl shadow-lg">
+                  FB
                 </div>
                 <div>
-                  <div className="text-xl font-black text-black">Farr Builders and Landmarks LTD</div>
-                  <div className="text-sm text-gray-500">Premium Real Estate Solutions</div>
+                  <div className="text-2xl font-black">Farr Builders</div>
+                  <div className="text-sm text-gray-400">Premium Real Estate Solutions</div>
                 </div>
               </div>
-              <p className="text-gray-500 leading-relaxed max-w-md">
+              <p className="text-gray-400 leading-relaxed max-w-md mb-6">
                 Redefining luxury living with exceptional properties that blend sophistication,
                 innovation, and timeless design.
               </p>
+              <div className="flex gap-3">
+                {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
+                  <a key={i} href="#" className="w-10 h-10 bg-white/10 hover:bg-amber-500 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110">
+                    <Icon className="w-5 h-5" />
+                  </a>
+                ))}
+              </div>
             </div>
 
             {/* Quick Links */}
             <div>
-              <h4 className="text-black font-bold mb-4">Quick Links</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-500 hover:text-black transition-colors">Properties</a></li>
-                <li><a href="#features" className="text-gray-500 hover:text-black transition-colors">Features</a></li>
-                <li><a href="#gallery" className="text-gray-500 hover:text-black transition-colors">Gallery</a></li>
-                <li><a href="#" className="text-gray-500 hover:text-black transition-colors">About Us</a></li>
+              <h4 className="text-white font-bold mb-6 text-lg">Quick Links</h4>
+              <ul className="space-y-3">
+                {['Properties', 'Features', 'About Us', 'Contact'].map((link) => (
+                  <li key={link}>
+                    <a href="#" className="text-gray-400 hover:text-amber-400 transition-colors flex items-center gap-2 group">
+                      <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                      {link}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
 
             {/* Contact */}
             <div>
-              <h4 className="text-black font-bold mb-4">Contact</h4>
-              <ul className="space-y-2 text-gray-500">
-                <li>+880 1234-567890</li>
-                <li>info@eliteproperties.com</li>
-                <li>Dhaka, Bangladesh</li>
+              <h4 className="text-white font-bold mb-6 text-lg">Contact Us</h4>
+              <ul className="space-y-4 text-gray-400">
+                <li className="flex items-center gap-3">
+                  <Phone className="w-5 h-5 text-amber-500" />
+                  +880 1234-567890
+                </li>
+                <li className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-amber-500" />
+                  info@farrbuilders.com
+                </li>
+                <li className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-amber-500" />
+                  Dhaka, Bangladesh
+                </li>
               </ul>
             </div>
           </div>
 
           {/* Bottom Bar */}
-          <div className="pt-8 border-t border-black/10 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-gray-500 text-sm">
               © {new Date().getFullYear()} Farr Builders and Landmarks LTD. All rights reserved.
             </div>
             <div className="flex gap-6 text-sm text-gray-500">
-              <a href="#" className="hover:text-black transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-black transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-black transition-colors">Cookie Policy</a>
+              <a href="#" className="hover:text-amber-400 transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-amber-400 transition-colors">Terms of Service</a>
             </div>
           </div>
         </div>
