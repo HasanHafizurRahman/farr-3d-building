@@ -1,4 +1,3 @@
-// components/Building.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -16,17 +15,17 @@ export default function Building({ modelPath, floors, onFloorClick }: BuildingPr
     const { scene } = useGLTF(modelPath);
 
     return (
-        <group position={[0, -4, 0]}>
+        <group position={[0, -8, 0]}>
             {/* The Visual Model */}
             <primitive object={scene} scale={0.5} />
 
-            {/* Interactive Hitboxes */}
-            <group position={[0, 3, 0]}>
+            {/* Interactive Hitboxes - positioned inside the building */}
+            <group position={[2, 1.5, -3]}>
                 {floors.map((floor, index) => (
                     <FloorHitbox
                         key={floor.id}
                         data={floor}
-                        position={[0, index * 1.5, 0]}
+                        position={[0, index * 1.4, 0]}
                         isHovered={hoveredFloor === floor.id}
                         onHover={(isHovering) => setHoveredFloor(isHovering ? floor.id : null)}
                         onClick={() => onFloorClick(floor)}
@@ -65,7 +64,7 @@ function FloorHitbox({ data, position, isHovered, onHover, onClick }: FloorHitbo
                     onClick();
                 }}
             >
-                <boxGeometry args={[3.5, 1.3, 3.5]} />
+                <boxGeometry args={[2.5, 1.2, 2.5]} />
                 <meshStandardMaterial
                     transparent
                     opacity={0}
@@ -77,8 +76,8 @@ function FloorHitbox({ data, position, isHovered, onHover, onClick }: FloorHitbo
             {isHovered && (
                 <group>
                     {/* Left edge bar */}
-                    <mesh position={[-1.8, 0, 0]}>
-                        <boxGeometry args={[0.08, 1.35, 3.6]} />
+                    <mesh position={[-1.3, 0, 0]}>
+                        <boxGeometry args={[0.06, 1.25, 2.6]} />
                         <meshStandardMaterial
                             color="#ffffff"
                             emissive="#ffffff"
@@ -88,8 +87,8 @@ function FloorHitbox({ data, position, isHovered, onHover, onClick }: FloorHitbo
                         />
                     </mesh>
                     {/* Right edge bar */}
-                    <mesh position={[1.8, 0, 0]}>
-                        <boxGeometry args={[0.08, 1.35, 3.6]} />
+                    <mesh position={[1.3, 0, 0]}>
+                        <boxGeometry args={[0.06, 1.25, 2.6]} />
                         <meshStandardMaterial
                             color="#ffffff"
                             emissive="#ffffff"
