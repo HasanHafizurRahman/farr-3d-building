@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Elite Properties",
+  title: "Farr Builders and Landmarks LTD",
   description: "Developer - Hasan Hafizur Rahman",
 };
 

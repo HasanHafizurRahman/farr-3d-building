@@ -43,7 +43,7 @@ export default function Home() {
             </div>
             <div className="leading-tight">
               <div className="text-lg font-black tracking-tight bg-gradient-to-r from-black to-gray-600 bg-clip-text text-transparent">
-                Elite Properties
+                Farr Builders and Landmarks LTD
               </div>
               <div className="text-xs text-gray-500 font-medium tracking-wide">Premium Real Estate Solutions</div>
             </div>
@@ -178,45 +178,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Gallery - Modern Masonry Style */}
-      <section id="gallery" className="max-w-[1440px] mx-auto px-6 sm:px-12 py-24">
-        <div className="text-center mb-16">
-          <h3 className="text-4xl sm:text-5xl font-black mb-4 bg-gradient-to-r from-black to-gray-500 bg-clip-text text-transparent">
-            Visual Journey
-          </h3>
-          <p className="text-gray-500 text-lg">A glimpse into luxury</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[Gallery1, Gallery2, Gallery3].map((img, idx) => (
-            <div
-              key={idx}
-              className="group relative h-96 rounded-3xl overflow-hidden bg-black/5 border border-black/10 hover:border-black/30 transition-all duration-500"
-            >
-              <Image
-                src={img}
-                alt={`Gallery ${idx + 1}`}
-                width={400}
-                height={400}
-                loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
-
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
-
-              {/* Hover Content */}
-              <div className="absolute inset-0 flex items-end p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div>
-                  <h4 className="text-black font-bold text-xl mb-2">Premium Space {idx + 1}</h4>
-                  <p className="text-gray-700 text-sm">Architectural Excellence</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* Premium CTA Section */}
       <section className="relative py-32 overflow-hidden bg-gray-50">
         {/* Background Elements */}
@@ -284,7 +245,7 @@ export default function Home() {
                   EP
                 </div>
                 <div>
-                  <div className="text-xl font-black text-black">Elite Properties</div>
+                  <div className="text-xl font-black text-black">Farr Builders and Landmarks LTD</div>
                   <div className="text-sm text-gray-500">Premium Real Estate Solutions</div>
                 </div>
               </div>
@@ -319,7 +280,7 @@ export default function Home() {
           {/* Bottom Bar */}
           <div className="pt-8 border-t border-black/10 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-gray-500 text-sm">
-              © {new Date().getFullYear()} Elite Properties. All rights reserved.
+              © {new Date().getFullYear()} Farr Builders and Landmarks LTD. All rights reserved.
             </div>
             <div className="flex gap-6 text-sm text-gray-500">
               <a href="#" className="hover:text-black transition-colors">Privacy Policy</a>

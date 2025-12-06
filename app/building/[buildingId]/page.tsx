@@ -161,10 +161,10 @@ export default async function BuildingPage({
             <footer className="border-t border-black/10 py-10 bg-white/50 backdrop-blur-xl">
                 <div className="max-w-[1440px] mx-auto px-6 sm:px-12 flex flex-col md:flex-row items-center justify-between gap-4">
                     <div>
-                        <div className="text-xl font-bold text-black">Elite Properties</div>
+                        <div className="text-xl font-bold text-black">Farr Builders and Landmarks LTD</div>
                         <div className="text-base text-gray-500">Premium Real Estate Solutions</div>
                     </div>
-                    <div className="text-base text-gray-500">© {new Date().getFullYear()} Elite Properties</div>
+                    <div className="text-base text-gray-500">© {new Date().getFullYear()} Farr Builders and Landmarks LTD</div>
                 </div>
             </footer>
         </main>

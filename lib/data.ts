@@ -25,11 +25,11 @@ export interface BuildingData {
 
 export const buildingsData: BuildingData[] = [
     {
-        id: 'skyline-tower',
-        name: 'Skyline Tower',
+        id: 'farr-tower',
+        name: 'Farr Tower',
         modelPath: 'https://architect-temp.vercel.app/asset.glb',
         description: 'A magnificent 10-storey residential tower redefining luxury living. Featuring panoramic views, state-of-the-art amenities, and a prime location.',
-        location: 'Gulshan Avenue, Dhaka',
+        location: 'Bashundhara, Dhaka',
         totalFloors: 10,
         possession: '2026',
         features: ['Panoramic Views', 'Infinity Pool', 'Smart Home System', 'Private Elevator'],
