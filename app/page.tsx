@@ -67,7 +67,7 @@ export default function Home() {
       </header>
 
       {/* 3D Building Viewer with Enhanced Overlay */}
-      <section className="relative h-screen w-full">
+      <section className="relative h-screen w-full mt-20">
         <div className="absolute inset-0">
           <Scene
             buildingModelPath={selectedBuilding.modelPath}
