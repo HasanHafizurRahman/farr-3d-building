@@ -64,3 +64,12 @@ export const getFloorById = (buildingId: string, floorId: string): FloorData | u
     if (!building) return undefined;
     return building.floors.find(floor => floor.id === floorId);
 };
+
+// Helper function to get floor by ID only (uses first building)
+export const getFloorByIdSimple = (floorId: string): { floor: FloorData; building: BuildingData } | undefined => {
+    for (const building of buildingsData) {
+        const floor = building.floors.find(f => f.id === floorId);
+        if (floor) return { floor, building };
+    }
+    return undefined;
+};

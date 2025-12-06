@@ -17,7 +17,7 @@ export default function Home() {
   const selectedBuilding = buildingsData.find(b => b.id === selectedBuildingId) || buildingsData[0];
 
   const handleFloorClick = (floor: FloorData) => {
-    router.push(`/building/${selectedBuildingId}/floor/${floor.id}`);
+    router.push(`/floor/${floor.id}`);
   };
 
   return (
@@ -126,13 +126,9 @@ export default function Home() {
                 </div>
               </div>
 
-              <button
-                onClick={() => router.push(`/building/${selectedBuildingId}`)}
-                className="w-full bg-black text-white font-bold py-4 rounded-xl hover:shadow-[0_0_30px_rgba(0,0,0,0.3)] transition-all duration-300 flex items-center justify-center gap-2 group"
-              >
-                <span>Explore Building</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
+              <div className="text-center py-3 px-4 bg-black/5 rounded-xl border border-black/10">
+                <p className="text-sm text-gray-600 font-medium">Click on any floor in the 3D model to view details</p>
+              </div>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { getBuildingById, getFloorById } from '@/lib/data';
+import { getFloorByIdSimple } from '@/lib/data';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Check, Home, Maximize2 } from 'lucide-react';
@@ -11,26 +11,27 @@ export async function generateStaticParams() {
 export default async function FloorPage({
     params
 }: {
-    params: Promise<{ buildingId: string; id: string }>
+    params: Promise<{ id: string }>
 }) {
-    const { buildingId, id } = await params;
-    const building = getBuildingById(buildingId);
-    const floor = getFloorById(buildingId, id);
+    const { id } = await params;
+    const result = getFloorByIdSimple(id);
 
-    if (!building || !floor) {
+    if (!result) {
         notFound();
     }
+
+    const { floor, building } = result;
 
     return (
         <main className="min-h-screen bg-white">
             {/* Floating Back Button */}
             <div className="fixed top-6 left-6 z-50">
                 <Link
-                    href={`/building/${buildingId}`}
+                    href="/"
                     className="inline-flex items-center gap-2 bg-white/70 backdrop-blur-xl text-gray-700 hover:text-black px-6 py-3 rounded-full shadow-xl hover:shadow-2xl transition-all hover:scale-105 active:scale-95 border border-black/10"
                 >
                     <ArrowLeft className="w-5 h-5" />
-                    <span className="font-semibold">Back to {building.name}</span>
+                    <span className="font-semibold">Back to Home</span>
                 </Link>
             </div>
 
