@@ -2,10 +2,11 @@
 'use client';
 
 import { Canvas, useThree } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows, Loader } from '@react-three/drei';
+import { OrbitControls, Environment, ContactShadows, useProgress } from '@react-three/drei';
 import Building from './Building';
+import BuildingLoader from './BuildingLoader';
 import { FloorData } from '@/lib/data';
-import { Suspense, useRef, useEffect } from 'react';
+import { Suspense, useRef, useEffect, useState } from 'react';
 
 // import the runtime OrbitControls type for proper typing
 import type { OrbitControls as ThreeOrbitControls } from 'three-stdlib';
@@ -14,6 +15,23 @@ interface SceneProps {
     buildingModelPath: string;
     floors: FloorData[];
     onFloorClick: (floor: FloorData) => void;
+}
+
+function LoadingOverlay() {
+    const { progress, active } = useProgress();
+    const [show, setShow] = useState(true);
+
+    useEffect(() => {
+        if (!active && progress === 100) {
+            // Small delay to ensure smooth transition
+            const timer = setTimeout(() => setShow(false), 500);
+            return () => clearTimeout(timer);
+        }
+    }, [active, progress]);
+
+    if (!show) return null;
+
+    return <BuildingLoader />;
 }
 
 function InnerScene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
@@ -36,7 +54,7 @@ function InnerScene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
         <>
             <ambientLight intensity={0.2} />
             <directionalLight
-                position={[5, 10, 5]}
+                position={[15, 10, 5]}
                 intensity={1}
                 castShadow
                 shadow-mapSize-width={1024}
@@ -67,17 +85,14 @@ function InnerScene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
 
 export default function Scene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
     return (
-        <div className="w-full h-screen bg-gray-50">
+        <div className="w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 relative">
             <Canvas camera={{ position: [15, 25, 45], fov: 45 }} dpr={[1, 2]} shadows performance={{ min: 0.5 }}>
                 <InnerScene buildingModelPath={buildingModelPath} floors={floors} onFloorClick={onFloorClick} />
             </Canvas>
 
-            <Loader
-                containerStyles={{ background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(10px)' }}
-                barStyles={{ background: 'linear-gradient(to right, #3b82f6, #a855f7)' }}
-                dataStyles={{ color: '#1e293b', fontWeight: 'bold' }}
-                dataInterpolation={(p) => `Loading ${p.toFixed(0)}%`}
-            />
+            {/* Custom Building Loader */}
+            <LoadingOverlay />
         </div>
     );
 }
+
