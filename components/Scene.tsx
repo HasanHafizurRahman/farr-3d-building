@@ -63,7 +63,7 @@ function InnerScene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
             {/* <Environment preset="night" /> */}
 
             <Suspense fallback={null}>
-                <group position={[0, 2, 0]}>
+                <group position={[-8, 4, 4]}>
                     <Building modelPath={buildingModelPath} floors={floors} onFloorClick={onFloorClick} />
                     <ContactShadows position={[0, -2, 0]} opacity={0.5} scale={20} blur={2} far={4.5} />
                 </group>
@@ -74,7 +74,7 @@ function InnerScene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
                 ref={controlsRef}
                 enablePan={false}
                 enableZoom={true}
-                minPolarAngle={0.1}
+                minPolarAngle={0.5}
                 maxPolarAngle={Math.PI / 2}
                 minDistance={15}
                 maxDistance={80}
