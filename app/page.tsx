@@ -3,25 +3,41 @@
 
 import React, { useState, useEffect } from 'react';
 import Scene from '@/components/Scene';
-import { buildingsData, FloorData } from '@/lib/data';
+import { FloorData, BuildingData } from '@/lib/data';
+import { getAdminBuildingsData } from '@/lib/adminData';
 import { useRouter } from 'next/navigation';
 import { MapPin, Calendar, Layers, ArrowRight, Phone, Mail, Star, Shield, Award, Gem, ChevronDown, Linkedin, Twitter, Instagram, Facebook } from 'lucide-react';
 
 export default function Home() {
   const router = useRouter();
-  const [selectedBuildingId] = useState(buildingsData[0].id);
-  const selectedBuilding = buildingsData.find(b => b.id === selectedBuildingId) || buildingsData[0];
+  const [buildingsData, setBuildingsData] = useState<BuildingData[]>([]);
+  const [selectedBuildingId, setSelectedBuildingId] = useState('');
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    const data = getAdminBuildingsData();
+    setBuildingsData(data);
+    if (data.length > 0) {
+      setSelectedBuildingId(data[0].id);
+    }
     setIsVisible(true);
   }, []);
+
+  const selectedBuilding = buildingsData.find(b => b.id === selectedBuildingId) || buildingsData[0];
 
   const handleFloorClick = (floor: FloorData) => {
     router.push(`/floor/${floor.id}`);
   };
 
   const featureIcons = [Star, Shield, Award, Gem];
+
+  if (!selectedBuilding) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500"></div>
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen w-full bg-white text-black overflow-hidden">
@@ -78,12 +94,11 @@ export default function Home() {
 
           <div className={`hidden md:flex items-center gap-4 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
             <button
-              onClick={() => router.push('/contact')}
+              onClick={() => router.push('/admin')}
               className="relative group overflow-hidden bg-gradient-to-r from-black via-gray-900 to-black text-white px-7 py-3 rounded-xl font-bold transition-all hover:shadow-[0_0_40px_rgba(0,0,0,0.3)] hover-lift"
             >
               <span className="relative z-10 flex items-center gap-2">
-                <Phone className="w-4 h-4" />
-                Schedule Tour
+                Get Started
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-amber-600/20 to-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </button>
@@ -192,7 +207,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {selectedBuilding.features.map((feature, index) => {
+            {selectedBuilding.features.map((feature: string, index: number) => {
               const IconComponent = featureIcons[index % featureIcons.length];
               return (
                 <div

@@ -1,26 +1,50 @@
-import { getFloorByIdSimple } from '@/lib/data';
-import { notFound } from 'next/navigation';
+'use client';
+
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { getAdminFloorByIdSimple, FloorData, BuildingData } from '@/lib/adminData';
 import Link from 'next/link';
 import { ArrowLeft, Check, Home, Maximize2, Phone, Mail, MapPin, Calendar, Building2, Star, Shield, Sparkles, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 
-export async function generateStaticParams() {
-    return [];
-}
+export default function FloorPage() {
+    const params = useParams();
+    const id = params?.id as string;
+    const [floor, setFloor] = useState<FloorData | null>(null);
+    const [building, setBuilding] = useState<BuildingData | null>(null);
+    const [loading, setLoading] = useState(true);
 
-export default async function FloorPage({
-    params
-}: {
-    params: Promise<{ id: string }>
-}) {
-    const { id } = await params;
-    const result = getFloorByIdSimple(id);
+    useEffect(() => {
+        if (id) {
+            const result = getAdminFloorByIdSimple(id);
+            if (result) {
+                setFloor(result.floor);
+                setBuilding(result.building);
+            }
+            setLoading(false);
+        }
+    }, [id]);
 
-    if (!result) {
-        notFound();
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-white flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500"></div>
+            </div>
+        );
     }
 
-    const { floor, building } = result;
+    if (!floor || !building) {
+        return (
+            <div className="min-h-screen bg-white flex items-center justify-center">
+                <div className="text-center">
+                    <h1 className="text-2xl font-bold text-gray-900 mb-4">Floor Not Found</h1>
+                    <Link href="/" className="text-amber-600 hover:text-amber-700">
+                        ← Back to Home
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <main className="min-h-screen bg-white overflow-hidden">
