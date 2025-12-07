@@ -2,7 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getAdminFloorByIdSimple, FloorData, BuildingData } from '@/lib/adminData';
+import { api, FloorData, BuildingData } from '@/lib/api';
 import Link from 'next/link';
 import { ArrowLeft, Check, Home, Maximize2, Phone, Mail, MapPin, Calendar, Building2, Star, Shield, Sparkles, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
@@ -16,12 +16,31 @@ export default function FloorPage() {
 
     useEffect(() => {
         if (id) {
-            const result = getAdminFloorByIdSimple(id);
-            if (result) {
-                setFloor(result.floor);
-                setBuilding(result.building);
-            }
-            setLoading(false);
+            api.getBuildings()
+                .then(buildings => {
+                    // Find the floor and its building
+                    let foundFloor: FloorData | undefined;
+                    let foundBuilding: BuildingData | undefined;
+
+                    for (const b of buildings) {
+                        const f = b.floors?.find(floor => floor.id === id);
+                        if (f) {
+                            foundFloor = f;
+                            foundBuilding = b;
+                            break;
+                        }
+                    }
+
+                    if (foundFloor && foundBuilding) {
+                        setFloor(foundFloor);
+                        setBuilding(foundBuilding);
+                    }
+                    setLoading(false);
+                })
+                .catch(err => {
+                    console.error('Failed to load floor data:', err);
+                    setLoading(false);
+                });
         }
     }, [id]);
 

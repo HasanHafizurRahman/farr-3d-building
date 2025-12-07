@@ -3,8 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Scene from '@/components/Scene';
-import { FloorData, BuildingData } from '@/lib/data';
-import { getAdminBuildingsData } from '@/lib/adminData';
+import { api, FloorData, BuildingData } from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { MapPin, Calendar, Layers, ArrowRight, Phone, Mail, Star, Shield, Award, Gem, ChevronDown, Linkedin, Twitter, Instagram, Facebook } from 'lucide-react';
 
@@ -13,14 +12,22 @@ export default function Home() {
   const [buildingsData, setBuildingsData] = useState<BuildingData[]>([]);
   const [selectedBuildingId, setSelectedBuildingId] = useState('');
   const [isVisible, setIsVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const data = getAdminBuildingsData();
-    setBuildingsData(data);
-    if (data.length > 0) {
-      setSelectedBuildingId(data[0].id);
-    }
-    setIsVisible(true);
+    api.getBuildings()
+      .then(data => {
+        setBuildingsData(data);
+        if (data.length > 0) {
+          setSelectedBuildingId(data[0].id);
+        }
+        setLoading(false);
+        setIsVisible(true);
+      })
+      .catch(err => {
+        console.error('Failed to load buildings:', err);
+        setLoading(false);
+      });
   }, []);
 
   const selectedBuilding = buildingsData.find(b => b.id === selectedBuildingId) || buildingsData[0];

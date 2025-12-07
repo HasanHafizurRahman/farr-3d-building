@@ -3,34 +3,35 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { loginAdmin, checkAdminAuth } from '@/lib/adminData';
-import { Lock, Eye, EyeOff, Building2 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Lock, Eye, EyeOff, Building2, User } from 'lucide-react';
 
 export default function AdminLoginPage() {
     const router = useRouter();
+    const { login, isAuthenticated } = useAuth();
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (checkAdminAuth()) {
+        if (isAuthenticated) {
             router.push('/admin');
         }
-    }, [router]);
+    }, [isAuthenticated, router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setLoading(true);
 
-        // Simulate network delay for better UX
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        if (loginAdmin(password)) {
+        try {
+            await login(username, password);
             router.push('/admin');
-        } else {
-            setError('Invalid password. Please try again.');
+        } catch (err: any) {
+            setError(err.message || 'Login failed. Please check your credentials.');
+        } finally {
             setLoading(false);
         }
     };
@@ -52,11 +53,30 @@ export default function AdminLoginPage() {
                             <Building2 className="w-8 h-8 text-white" />
                         </div>
                         <h1 className="text-2xl font-bold text-white mb-2">Admin Login</h1>
-                        <p className="text-gray-400 text-sm">Enter your password to access the admin panel</p>
+                        <p className="text-gray-400 text-sm">Enter your credentials to access the admin panel</p>
                     </div>
 
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                                Username
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <User className="w-5 h-5 text-gray-500" />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    placeholder="Enter username"
+                                    className="w-full bg-gray-900/50 border border-gray-700 rounded-xl pl-12 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all"
+                                    required
+                                />
+                            </div>
+                        </div>
+
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">
                                 Password
@@ -108,7 +128,7 @@ export default function AdminLoginPage() {
                     {/* Hint */}
                     <div className="mt-6 text-center">
                         <p className="text-gray-500 text-xs">
-                            Default password: <code className="bg-gray-700 px-2 py-0.5 rounded text-amber-400">admin123</code>
+                            Default: <code className="bg-gray-700 px-2 py-0.5 rounded text-amber-400">admin / password</code>
                         </p>
                     </div>
                 </div>

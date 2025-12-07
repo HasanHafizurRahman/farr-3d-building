@@ -2,37 +2,47 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import {
-    getAdminBuildingsData,
-    saveAdminBuildingsData,
-    deleteBuilding,
-    BuildingData
-} from '@/lib/adminData';
+import { api, BuildingData } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 import {
     Building2, Plus, Trash2, Edit2, X, Save, MapPin,
     Calendar, Layers, Star, ChevronDown, ChevronUp
 } from 'lucide-react';
 
 export default function BuildingsPage() {
+    const { token } = useAuth();
     const [buildings, setBuildings] = useState<BuildingData[]>([]);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [isCreating, setIsCreating] = useState(false);
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [formData, setFormData] = useState<Partial<BuildingData>>({});
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         loadBuildings();
     }, []);
 
     const loadBuildings = () => {
-        setBuildings(getAdminBuildingsData());
+        setLoading(true);
+        api.getBuildings()
+            .then(data => {
+                setBuildings(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error('Failed to load buildings:', err);
+                setError('Failed to load buildings');
+                setLoading(false);
+            });
     };
 
     const handleCreate = () => {
         setIsCreating(true);
         setEditingId(null);
         setFormData({
-            id: `building-${Date.now()}`,
+            // No ID for creation, backend will assign
             name: '',
             modelPath: 'https://architect-temp.vercel.app/asset.glb',
             description: '',
@@ -50,34 +60,48 @@ export default function BuildingsPage() {
         setFormData({ ...building });
     };
 
-    const handleSave = () => {
-        if (!formData.name || !formData.location) {
-            alert('Please fill in required fields');
+    const handleSave = async () => {
+        if (!formData.name || !formData.location || !formData.modelPath) {
+            alert('Please fill in required fields (Name, Location, Model Path)');
             return;
         }
 
-        const allBuildings = getAdminBuildingsData();
-
-        if (isCreating) {
-            allBuildings.push(formData as BuildingData);
-        } else {
-            const index = allBuildings.findIndex(b => b.id === editingId);
-            if (index !== -1) {
-                allBuildings[index] = { ...allBuildings[index], ...formData } as BuildingData;
-            }
+        if (!token) {
+            alert('You must be logged in to save changes');
+            return;
         }
 
-        saveAdminBuildingsData(allBuildings);
-        loadBuildings();
-        setEditingId(null);
-        setIsCreating(false);
-        setFormData({});
+        setSaving(true);
+        try {
+            if (isCreating) {
+                await api.createBuilding(formData, token);
+            } else if (editingId) {
+                await api.updateBuilding(editingId, formData, token);
+            }
+
+            await loadBuildings();
+            setEditingId(null);
+            setIsCreating(false);
+            setFormData({});
+        } catch (err: any) {
+            console.error('Failed to save building:', err);
+            alert(err.message || 'Failed to save building');
+        } finally {
+            setSaving(false);
+        }
     };
 
-    const handleDelete = (id: string) => {
+    const handleDelete = async (id: string) => {
+        if (!token) return;
+
         if (confirm('Are you sure you want to delete this building? This will also delete all floors.')) {
-            deleteBuilding(id);
-            loadBuildings();
+            try {
+                await api.deleteBuilding(id, token);
+                loadBuildings();
+            } catch (err: any) {
+                console.error('Failed to delete building:', err);
+                alert(err.message || 'Failed to delete building');
+            }
         }
     };
 
@@ -161,7 +185,7 @@ export default function BuildingsPage() {
 
                 <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                        3D Model URL
+                        3D Model URL *
                     </label>
                     <input
                         type="text"
@@ -221,20 +245,48 @@ export default function BuildingsPage() {
             <div className="flex gap-3">
                 <button
                     onClick={handleSave}
-                    className="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl hover:shadow-amber-500/20 transition-all flex items-center justify-center gap-2"
+                    disabled={saving}
+                    className="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl hover:shadow-amber-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    <Save className="w-5 h-5" />
+                    {saving ? (
+                        <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                    ) : (
+                        <Save className="w-5 h-5" />
+                    )}
                     {isCreating ? 'Create Building' : 'Save Changes'}
                 </button>
                 <button
                     onClick={handleCancel}
-                    className="px-6 py-3 border border-gray-700 rounded-xl text-gray-300 hover:bg-gray-800 transition-all"
+                    disabled={saving}
+                    className="px-6 py-3 border border-gray-700 rounded-xl text-gray-300 hover:bg-gray-800 transition-all disabled:opacity-50"
                 >
                     Cancel
                 </button>
             </div>
         </div>
     );
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="text-center p-8 bg-red-500/10 rounded-2xl border border-red-500/20">
+                <p className="text-red-400 mb-4">{error}</p>
+                <button
+                    onClick={loadBuildings}
+                    className="px-4 py-2 bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30"
+                >
+                    Retry
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -295,7 +347,7 @@ export default function BuildingsPage() {
                                                 <Calendar className="w-4 h-4" /> {building.possession}
                                             </span>
                                             <span className="flex items-center gap-1">
-                                                <Layers className="w-4 h-4" /> {building.floors.length} Floors
+                                                <Layers className="w-4 h-4" /> {building.floors?.length || 0} Floors
                                             </span>
                                         </div>
                                     </div>

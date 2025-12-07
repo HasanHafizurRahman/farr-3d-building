@@ -3,27 +3,25 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { checkAdminAuth, logoutAdmin } from '@/lib/adminData';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { Building2, Layers, Settings, LogOut, Home, Menu, X, Database } from 'lucide-react';
 import Link from 'next/link';
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+// Inner layout component that consumes AuthContext
+function AdminLayoutContent({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+    const { isAuthenticated, isLoading, logout } = useAuth();
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     useEffect(() => {
-        const auth = checkAdminAuth();
-        setIsAuthenticated(auth);
-
-        if (!auth && pathname !== '/admin/login') {
+        if (!isLoading && !isAuthenticated && pathname !== '/admin/login') {
             router.push('/admin/login');
         }
-    }, [pathname, router]);
+    }, [isLoading, isAuthenticated, pathname, router]);
 
     const handleLogout = () => {
-        logoutAdmin();
+        logout();
         router.push('/admin/login');
     };
 
@@ -31,12 +29,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { href: '/admin', icon: Home, label: 'Dashboard' },
         { href: '/admin/buildings', icon: Building2, label: 'Buildings' },
         { href: '/admin/floors', icon: Layers, label: 'Floors' },
-        { href: '/admin/data', icon: Database, label: 'Export/Import' },
+        { href: '/admin/data', icon: Database, label: 'Export Data' },
         { href: '/admin/settings', icon: Settings, label: 'Settings' },
     ];
 
+    // Show login page without layout
+    if (pathname === '/admin/login') {
+        return <>{children}</>;
+    }
+
     // Show loading state while checking auth
-    if (isAuthenticated === null) {
+    if (isLoading) {
         return (
             <div className="min-h-screen bg-gray-900 flex items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500"></div>
@@ -44,12 +47,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         );
     }
 
-    // Show login page without layout
-    if (pathname === '/admin/login') {
-        return <>{children}</>;
-    }
-
-    // Redirect to login if not authenticated
+    // Redirect to login if not authenticated (handled by useEffect, but safe guard here)
     if (!isAuthenticated) {
         return null;
     }
@@ -147,5 +145,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </main>
             </div>
         </div>
+    );
+}
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+    return (
+        <AuthProvider>
+            <AdminLayoutContent>{children}</AdminLayoutContent>
+        </AuthProvider>
     );
 }

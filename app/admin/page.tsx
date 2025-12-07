@@ -2,26 +2,50 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getAdminBuildingsData, BuildingData } from '@/lib/adminData';
+import { api, BuildingData } from '@/lib/api';
 import { Building2, Layers, MapPin, TrendingUp, ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminDashboard() {
     const [buildings, setBuildings] = useState<BuildingData[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
     useEffect(() => {
-        setBuildings(getAdminBuildingsData());
-        setLoading(false);
+        api.getBuildings()
+            .then(data => {
+                setBuildings(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error('Failed to load buildings:', err);
+                setError('Failed to load dashboard data. Is the backend running?');
+                setLoading(false);
+            });
     }, []);
 
-    const totalFloors = buildings.reduce((acc, b) => acc + b.floors.length, 0);
-    const totalFeatures = buildings.reduce((acc, b) => acc + b.features.length, 0);
+    const totalFloors = buildings.reduce((acc, b) => acc + (b.floors?.length || 0), 0);
+    const totalFeatures = buildings.reduce((acc, b) => acc + (b.features?.length || 0), 0);
 
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-8 text-center">
+                <div className="text-red-400 mb-2 font-bold text-lg">Error Loading Dashboard</div>
+                <div className="text-gray-400 mb-4">{error}</div>
+                <button
+                    onClick={() => window.location.reload()}
+                    className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-xl transition-all"
+                >
+                    Retry
+                </button>
             </div>
         );
     }
@@ -134,11 +158,11 @@ export default function AdminDashboard() {
                                     </div>
                                     <div className="hidden sm:flex items-center gap-6 text-sm">
                                         <div className="text-center">
-                                            <div className="text-white font-bold">{building.floors.length}</div>
+                                            <div className="text-white font-bold">{building.floors?.length || 0}</div>
                                             <div className="text-gray-500">Floors</div>
                                         </div>
                                         <div className="text-center">
-                                            <div className="text-white font-bold">{building.features.length}</div>
+                                            <div className="text-white font-bold">{building.features?.length || 0}</div>
                                             <div className="text-gray-500">Features</div>
                                         </div>
                                         <div className="text-center">
@@ -184,8 +208,8 @@ export default function AdminDashboard() {
                     className="group bg-gray-800/50 border border-gray-700/50 rounded-2xl p-6 hover:border-green-500/30 transition-all"
                 >
                     <TrendingUp className="w-8 h-8 text-green-400 mb-4 group-hover:scale-110 transition-transform" />
-                    <h3 className="text-lg font-bold text-white mb-2">Export/Import</h3>
-                    <p className="text-sm text-gray-400">Backup or restore your content data</p>
+                    <h3 className="text-lg font-bold text-white mb-2">Export Data</h3>
+                    <p className="text-sm text-gray-400">Backup your content data</p>
                 </Link>
             </div>
         </div>

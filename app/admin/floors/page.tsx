@@ -2,36 +2,43 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import {
-    getAdminBuildingsData,
-    addFloor,
-    updateFloor,
-    deleteFloor,
-    BuildingData,
-    FloorData
-} from '@/lib/adminData';
+import { api, BuildingData, FloorData } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 import {
     Layers, Plus, Trash2, Edit2, X, Save, Building2,
     DollarSign, Maximize2, FileText, Image, Check
 } from 'lucide-react';
 
 export default function FloorsPage() {
+    const { token } = useAuth();
     const [buildings, setBuildings] = useState<BuildingData[]>([]);
     const [selectedBuildingId, setSelectedBuildingId] = useState<string>('');
     const [editingFloorId, setEditingFloorId] = useState<string | null>(null);
     const [isCreating, setIsCreating] = useState(false);
     const [formData, setFormData] = useState<Partial<FloorData>>({});
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         loadData();
     }, []);
 
     const loadData = () => {
-        const data = getAdminBuildingsData();
-        setBuildings(data);
-        if (data.length > 0 && !selectedBuildingId) {
-            setSelectedBuildingId(data[0].id);
-        }
+        setLoading(true);
+        api.getBuildings()
+            .then(data => {
+                setBuildings(data);
+                if (data.length > 0 && !selectedBuildingId) {
+                    setSelectedBuildingId(data[0].id);
+                }
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error('Failed to load buildings:', err);
+                setError('Failed to load buildings');
+                setLoading(false);
+            });
     };
 
     const selectedBuilding = buildings.find(b => b.id === selectedBuildingId);
@@ -47,7 +54,7 @@ export default function FloorsPage() {
         setIsCreating(true);
         setEditingFloorId(null);
         setFormData({
-            id: `floor-${Date.now()}`,
+            // backend assigns ID
             level: nextLevel,
             name: `${nextLevel}th Floor - Residential`,
             price: '$500,000',
@@ -65,26 +72,52 @@ export default function FloorsPage() {
         setFormData({ ...floor });
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!formData.name || !formData.price) {
-            alert('Please fill in required fields');
+            alert('Please fill in required fields (Name, Price)');
             return;
         }
 
-        if (isCreating) {
-            addFloor(selectedBuildingId, formData as FloorData);
-        } else if (editingFloorId) {
-            updateFloor(selectedBuildingId, editingFloorId, formData);
+        if (!token) {
+            alert('You must be logged in to save changes');
+            return;
         }
 
-        loadData();
-        handleCancel();
+        setSaving(true);
+        try {
+            if (isCreating) {
+                await api.addFloor(selectedBuildingId, formData, token);
+            } else if (editingFloorId) {
+                await api.updateFloor(selectedBuildingId, editingFloorId, formData, token);
+            }
+
+            // Refresh data to get updated floor list
+            const updatedBuildings = await api.getBuildings();
+            setBuildings(updatedBuildings);
+
+            handleCancel();
+        } catch (err: any) {
+            console.error('Failed to save floor:', err);
+            alert(err.message || 'Failed to save floor');
+        } finally {
+            setSaving(false);
+        }
     };
 
-    const handleDelete = (floorId: string) => {
+    const handleDelete = async (floorId: string) => {
+        if (!token) return;
+
         if (confirm('Are you sure you want to delete this floor?')) {
-            deleteFloor(selectedBuildingId, floorId);
-            loadData();
+            try {
+                await api.deleteFloor(selectedBuildingId, floorId, token);
+
+                // Refresh data
+                const updatedBuildings = await api.getBuildings();
+                setBuildings(updatedBuildings);
+            } catch (err: any) {
+                console.error('Failed to delete floor:', err);
+                alert(err.message || 'Failed to delete floor');
+            }
         }
     };
 
@@ -241,20 +274,48 @@ export default function FloorsPage() {
             <div className="flex gap-3">
                 <button
                     onClick={handleSave}
-                    className="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl hover:shadow-amber-500/20 transition-all flex items-center justify-center gap-2"
+                    disabled={saving}
+                    className="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl hover:shadow-amber-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    <Save className="w-5 h-5" />
+                    {saving ? (
+                        <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                    ) : (
+                        <Save className="w-5 h-5" />
+                    )}
                     {isCreating ? 'Create Floor' : 'Save Changes'}
                 </button>
                 <button
                     onClick={handleCancel}
-                    className="px-6 py-3 border border-gray-700 rounded-xl text-gray-300 hover:bg-gray-800 transition-all"
+                    disabled={saving}
+                    className="px-6 py-3 border border-gray-700 rounded-xl text-gray-300 hover:bg-gray-800 transition-all disabled:opacity-50"
                 >
                     Cancel
                 </button>
             </div>
         </div>
     );
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="text-center p-8 bg-red-500/10 rounded-2xl border border-red-500/20">
+                <p className="text-red-400 mb-4">{error}</p>
+                <button
+                    onClick={loadData}
+                    className="px-4 py-2 bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30"
+                >
+                    Retry
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -281,25 +342,29 @@ export default function FloorsPage() {
                     Select Building
                 </label>
                 <div className="flex flex-wrap gap-2">
-                    {buildings.map((building) => (
-                        <button
-                            key={building.id}
-                            onClick={() => {
-                                setSelectedBuildingId(building.id);
-                                handleCancel();
-                            }}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all ${selectedBuildingId === building.id
-                                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                                : 'bg-gray-700/50 text-gray-300 border border-gray-600 hover:border-gray-500'
-                                }`}
-                        >
-                            <Building2 className="w-4 h-4" />
-                            {building.name}
-                            <span className="bg-gray-600/50 px-2 py-0.5 rounded text-xs">
-                                {building.floors.length}
-                            </span>
-                        </button>
-                    ))}
+                    {buildings.length === 0 ? (
+                        <p className="text-gray-500 text-sm">No buildings found</p>
+                    ) : (
+                        buildings.map((building) => (
+                            <button
+                                key={building.id}
+                                onClick={() => {
+                                    setSelectedBuildingId(building.id);
+                                    handleCancel();
+                                }}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all ${selectedBuildingId === building.id
+                                    ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                    : 'bg-gray-700/50 text-gray-300 border border-gray-600 hover:border-gray-500'
+                                    }`}
+                            >
+                                <Building2 className="w-4 h-4" />
+                                {building.name}
+                                <span className="bg-gray-600/50 px-2 py-0.5 rounded text-xs">
+                                    {building.floors?.length || 0}
+                                </span>
+                            </button>
+                        ))
+                    )}
                 </div>
             </div>
 
