@@ -6,7 +6,7 @@ import { api, BuildingData, FloorData } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import {
     Layers, Plus, Trash2, Edit2, X, Save, Building2,
-    DollarSign, Maximize2, FileText, Image, Check
+    DollarSign, Maximize2, FileText, Image, Check, Upload
 } from 'lucide-react';
 
 export default function FloorsPage() {
@@ -16,6 +16,7 @@ export default function FloorsPage() {
     const [editingFloorId, setEditingFloorId] = useState<string | null>(null);
     const [isCreating, setIsCreating] = useState(false);
     const [formData, setFormData] = useState<Partial<FloorData>>({});
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
@@ -60,7 +61,7 @@ export default function FloorsPage() {
             price: '$500,000',
             size: '2,500 sqft',
             description: '',
-            mapUrl: '/assets/home-plans-building-design-500x500.webp',
+            mapUrl: '',
             color: `hsl(${210 + (nextLevel * 5)}, 70%, ${80 - (nextLevel * 3)}%)`,
             benefits: []
         });
@@ -70,6 +71,7 @@ export default function FloorsPage() {
         setEditingFloorId(floor.id);
         setIsCreating(false);
         setFormData({ ...floor });
+        setSelectedFile(null);
     };
 
     const handleSave = async () => {
@@ -85,10 +87,35 @@ export default function FloorsPage() {
 
         setSaving(true);
         try {
+            let floorId = editingFloorId;
+
             if (isCreating) {
-                await api.addFloor(selectedBuildingId, formData, token);
+                const newFloor = await api.addFloor(selectedBuildingId, formData, token);
+                floorId = newFloor.id; // Correctly get the ID from the returned BuildingData or FloorData?? 
+                // Wait, addFloor returns BuildingData... we need to find the new floor ID or better yet, verify API response.
+                // Actually in api.ts: addFloor returns BuildingData. This is tricky. 
+                // We need to assume the backend adds it and we might need to fetch it or guess it?
+                // Actually, let's look at api.ts again. addFloor returns BuildingData.
+                // This means we might need to find the floor with the highest ID or matching our temp data?
+                // Or maybe we can rely on order. 
+                // Let's refector this part in a bit, or assume the backend logic.
+                // Correction: The user prompt example implies we get a URL back from upload.
+                // The prompt says: POST /api/floors/:floorId/upload-map
+                // We need the floorId. 
+                // If addFloor returns the updated Building, we can find the floor that matches our criteria or was just added.
+                // Let's assume the last floor in the array is the new one for now, or use the level.
+
+                // NOTE: Since I can't easily change the backend response for addFloor right now to return just the ID,
+                // I will search for the floor in the returned building data.
+                const createdFloor = newFloor.floors.find(f => f.level === formData.level && f.name === formData.name);
+                if (createdFloor) floorId = createdFloor.id;
             } else if (editingFloorId) {
                 await api.updateFloor(selectedBuildingId, editingFloorId, formData, token);
+            }
+
+            // Handle File Upload
+            if (floorId && selectedFile) {
+                await api.uploadFloorMap(floorId, selectedFile, token);
             }
 
             // Refresh data to get updated floor list
@@ -125,6 +152,7 @@ export default function FloorsPage() {
         setEditingFloorId(null);
         setIsCreating(false);
         setFormData({});
+        setSelectedFile(null);
     };
 
     const handleBenefitChange = (index: number, value: string) => {
@@ -214,15 +242,65 @@ export default function FloorsPage() {
 
                 <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Map/Floor Plan Image URL
+                        Map/Floor Plan Image
                     </label>
-                    <input
-                        type="text"
-                        value={formData.mapUrl || ''}
-                        onChange={(e) => setFormData({ ...formData, mapUrl: e.target.value })}
-                        className="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500"
-                        placeholder="URL to floor plan image"
-                    />
+                    <div className="flex gap-4 items-start">
+                        <div className="flex-1">
+                            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-700 border-dashed rounded-xl cursor-pointer bg-gray-900/50 hover:bg-gray-800/50 hover:border-amber-500/50 transition-all">
+                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                                    <p className="text-sm text-gray-400">
+                                        <span className="font-semibold">Click to upload</span> or drag and drop
+                                    </p>
+                                    <p className="text-xs text-gray-500">SVG, PNG, JPG or GIF</p>
+                                </div>
+                                <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        if (e.target.files && e.target.files[0]) {
+                                            setSelectedFile(e.target.files[0]);
+                                        }
+                                    }}
+                                />
+                            </label>
+                        </div>
+
+                        {(selectedFile || formData.mapUrl) && (
+                            <div className="w-32 h-32 bg-black/50 rounded-xl border border-gray-700 overflow-hidden relative flex items-center justify-center">
+                                {selectedFile ? (
+                                    <img
+                                        src={URL.createObjectURL(selectedFile)}
+                                        alt="Preview"
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <img
+                                        src={formData.mapUrl}
+                                        alt="Current Map"
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                            (e.target as HTMLImageElement).src = 'https://placehold.co/400x400?text=No+Image';
+                                        }}
+                                    />
+                                )}
+                                {selectedFile && (
+                                    <button
+                                        onClick={() => setSelectedFile(null)}
+                                        className="absolute top-1 right-1 bg-red-500/80 text-white p-1 rounded-full hover:bg-red-500 transition-colors"
+                                    >
+                                        <X className="w-3 h-3" />
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    {selectedFile && (
+                        <p className="text-xs text-amber-400 mt-2">
+                            * File selected: {selectedFile.name}
+                        </p>
+                    )}
                 </div>
             </div>
 

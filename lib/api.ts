@@ -177,6 +177,24 @@ export const api = {
         const result = await res.json();
         if (!res.ok) throw new Error(result.message || 'Failed to delete floor');
         return result;
+    },
+
+    uploadFloorMap: async (floorId: string, file: File, token: string): Promise<{ message: string; mapUrl: string }> => {
+        const formData = new FormData();
+        formData.append('map', file);
+
+        const res = await fetch(`${API_URL}/floors/${floorId}/upload-map`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+                // Note: Content-Type is set automatically by browser for FormData
+            },
+            body: formData
+        });
+
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.message || 'Failed to upload map');
+        return result;
     }
 };
 
