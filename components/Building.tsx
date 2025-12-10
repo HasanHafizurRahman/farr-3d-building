@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Html, useCursor, useGLTF } from '@react-three/drei';
 import { FloorData } from '@/lib/data';
+import Image from 'next/image';
 
 interface BuildingProps {
     modelPath: string;
@@ -106,10 +107,12 @@ function FloorHitbox({ data, position, isHovered, onHover, onClick }: FloorHitbo
                     <div className="bg-white/95 backdrop-blur-xl p-4 rounded-2xl shadow-2xl border w-96 transform transition-all duration-300 scale-100 origin-left">
                         {/* Map Image */}
                         <div className="relative w-full h-40 rounded-xl overflow-hidden mb-3 bg-gray-100">
-                            <img
+                            <Image
                                 src={data.mapUrl}
                                 alt={`${data.name} floor plan`}
-                                className="w-full h-full object-cover"
+                                className="object-cover"
+                                fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             />
                             <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded-full">
                                 Floor {data.level}
