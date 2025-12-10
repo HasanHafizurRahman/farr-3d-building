@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { api, BuildingData, FloorData } from '@/lib/api';
+import { api, BuildingData, FloorData, getImageUrl } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
 import {
     Layers, Plus, Trash2, Edit2, X, Save, Building2,
@@ -277,7 +277,7 @@ export default function FloorsPage() {
                                     />
                                 ) : (
                                     <img
-                                        src={formData.mapUrl}
+                                        src={getImageUrl(formData.mapUrl || '')}
                                         alt="Current Map"
                                         className="w-full h-full object-cover"
                                         onError={(e) => {

@@ -56,6 +56,14 @@ export interface ApiError {
     message: string;
 }
 
+// Helper to get full image URL
+export const getImageUrl = (path: string) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    const baseUrl = API_URL.replace('/api', '');
+    return `${baseUrl}${path}`;
+};
+
 // API Functions
 export const api = {
     // === HEALTH CHECK ===
