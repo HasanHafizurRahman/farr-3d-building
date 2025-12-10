@@ -58,8 +58,14 @@ export interface ApiError {
 
 // Helper to get full image URL
 export const getImageUrl = (path: string) => {
-    if (!path) return '';
-    if (path.startsWith('http')) return path;
+    if (!path) return 'https://placehold.co/400x400?text=No+Image';
+    
+    // Cloudinary URLs are already absolute (start with https://)
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+        return path;
+    }
+    
+    // Fallback for legacy relative paths (old uploads before Cloudinary)
     const baseUrl = API_URL.replace('/api', '');
     return `${baseUrl}${path}`;
 };
