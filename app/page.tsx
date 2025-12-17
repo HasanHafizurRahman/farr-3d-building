@@ -117,7 +117,7 @@ export default function Home() {
       </header>
 
       {/* Hero Section - 3D Building Viewer */}
-      <section className="relative h-screen w-full mt-[90px] pt-20">
+      <section className="relative h-screen w-full pt-20">
         <div className="absolute inset-0">
           <Scene
             buildingModelPath={selectedBuilding.modelPath}
@@ -127,12 +127,12 @@ export default function Home() {
         </div>
 
         {/* Premium Floating Building Card */}
-        <div className={`absolute left-6 lg:left-12 bottom-6 z-30 max-w-md transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}>
+        <div className={`absolute left-6 lg:left-12 bottom-10 z-30 max-w-sm transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}>
           <div className="relative group">
             {/* Animated Glow */}
             <div className="absolute -inset-2 bg-gradient-to-r from-amber-500/20 via-amber-400/10 to-amber-500/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700 animate-pulse-glow" />
 
-            <div className="relative glass rounded-3xl p-8 shadow-2xl border border-white/50 hover:border-amber-200/50 transition-all duration-500">
+            <div className="relative glass rounded-2xl p-6 shadow-2xl border border-white/50 hover:border-amber-200/50 transition-all duration-500">
               {/* Premium Badge */}
               <div className="absolute -top-3 -right-3">
                 <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg animate-float">
@@ -142,7 +142,7 @@ export default function Home() {
 
               <div className="flex items-start justify-between mb-5">
                 <div>
-                  <h2 className="text-3xl font-black mb-1">
+                  <h2 className="text-2xl font-black mb-1">
                     <span className="bg-gradient-to-r from-black via-gray-800 to-gray-600 bg-clip-text text-transparent">
                       {selectedBuilding.name}
                     </span>
@@ -151,10 +151,10 @@ export default function Home() {
                 </div>
               </div>
 
-              <p className="text-gray-500 mb-6 leading-relaxed text-sm">{selectedBuilding.description}</p>
+              <p className="text-gray-500 mb-4 leading-relaxed text-xs">{selectedBuilding.description}</p>
 
               {/* Info Grid */}
-              <div className="grid grid-cols-3 gap-3 mb-6">
+              <div className="grid grid-cols-3 gap-2 mb-4">
                 <div className="bg-black/5 rounded-xl p-3 text-center hover:bg-black/10 transition-colors">
                   <MapPin className="w-5 h-5 mx-auto mb-1 text-amber-600" />
                   <div className="text-xs text-gray-500 mb-0.5">Location</div>
@@ -174,7 +174,7 @@ export default function Home() {
 
               {/* CTA Hint */}
               <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200/50">
-                <p className="text-sm text-amber-800 font-medium flex items-center gap-2">
+                <p className="text-xs text-amber-800 font-medium flex items-center gap-2">
                   <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
                   Hover over floors in the 3D model to explore
                 </p>
