@@ -117,7 +117,7 @@ export default function Home() {
       </header>
 
       {/* Hero Section - 3D Building Viewer */}
-      <section className="relative h-screen w-full pt-20">
+      <section className="relative h-screen w-full mt-[90px] pt-20">
         <div className="absolute inset-0">
           <Scene
             buildingModelPath={selectedBuilding.modelPath}
@@ -127,7 +127,7 @@ export default function Home() {
         </div>
 
         {/* Premium Floating Building Card */}
-        <div className={`absolute left-6 lg:left-12 bottom-8 z-30 max-w-md transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}>
+        <div className={`absolute left-6 lg:left-12 bottom-6 z-30 max-w-md transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'}`}>
           <div className="relative group">
             {/* Animated Glow */}
             <div className="absolute -inset-2 bg-gradient-to-r from-amber-500/20 via-amber-400/10 to-amber-500/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700 animate-pulse-glow" />
