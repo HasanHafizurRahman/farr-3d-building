@@ -13,7 +13,8 @@ interface BuildingProps {
 
 export default function Building({ modelPath, floors, onFloorClick }: BuildingProps) {
     const [hoveredFloor, setHoveredFloor] = useState<string | null>(null);
-    const { scene } = useGLTF(modelPath);
+    // Enable Draco compression support
+    const { scene } = useGLTF(modelPath, true) as any;
 
     return (
         <group position={[0, -8, 0]}>

@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import Scene from '@/components/Scene';
 import { api, FloorData, BuildingData } from '@/lib/api';
+import { useGLTF } from '@react-three/drei';
 import { useRouter } from 'next/navigation';
 import { MapPin, Calendar, Layers, ArrowRight, Phone, Mail, Star, Shield, Award, Gem, ChevronDown, Linkedin, Twitter, Instagram, Facebook } from 'lucide-react';
 
@@ -20,6 +21,8 @@ export default function Home() {
         setBuildingsData(data);
         if (data.length > 0) {
           setSelectedBuildingId(data[0].id);
+          // Preload the model to speed up initial render
+          useGLTF.preload(data[0].modelPath);
         }
         setLoading(false);
         setIsVisible(true);

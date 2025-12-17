@@ -65,7 +65,7 @@ function InnerScene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
             <Suspense fallback={null}>
                 <group position={[-8, 4, 4]}>
                     <Building modelPath={buildingModelPath} floors={floors} onFloorClick={onFloorClick} />
-                    <ContactShadows position={[0, -2, 0]} opacity={0.5} scale={20} blur={2} far={4.5} />
+                    <ContactShadows position={[0, -2, 0]} opacity={0.5} scale={20} blur={2.5} far={4.5} resolution={256} frames={1} />
                 </group>
             </Suspense>
 
@@ -86,7 +86,7 @@ function InnerScene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
 export default function Scene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
     return (
         <div className="w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 relative">
-            <Canvas camera={{ position: [15, 25, 45], fov: 45 }} dpr={[1, 2]} shadows performance={{ min: 0.5 }}>
+            <Canvas camera={{ position: [15, 25, 45], fov: 45 }} dpr={[1, 1.5]} shadows performance={{ min: 0.5 }}>
                 <InnerScene buildingModelPath={buildingModelPath} floors={floors} onFloorClick={onFloorClick} />
             </Canvas>
 
