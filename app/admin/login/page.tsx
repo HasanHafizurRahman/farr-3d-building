@@ -128,7 +128,7 @@ export default function AdminLoginPage() {
                     {/* Hint */}
                     <div className="mt-6 text-center">
                         <p className="text-gray-500 text-xs">
-                            Default: <code className="bg-gray-700 px-2 py-0.5 rounded text-amber-400">admin / password</code>
+                            Default: <code className="bg-gray-700 px-2 py-0.5 rounded text-amber-400">admin / password123</code>
                         </p>
                     </div>
                 </div>
