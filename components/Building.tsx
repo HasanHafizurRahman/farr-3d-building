@@ -9,9 +9,10 @@ interface BuildingProps {
     modelPath: string;
     floors: FloorData[];
     onFloorClick: (floor: FloorData) => void;
+    isDragging?: boolean;
 }
 
-export default function Building({ modelPath, floors, onFloorClick }: BuildingProps) {
+export default function Building({ modelPath, floors, onFloorClick, isDragging = false }: BuildingProps) {
     const [hoveredFloor, setHoveredFloor] = useState<string | null>(null);
     // Enable Draco compression support
     const { scene } = useGLTF(modelPath, true) as any;
@@ -28,9 +29,9 @@ export default function Building({ modelPath, floors, onFloorClick }: BuildingPr
                         key={floor.id}
                         data={floor}
                         position={[0, index * 1.4, 0]}
-                        isHovered={hoveredFloor === floor.id}
-                        onHover={(isHovering) => setHoveredFloor(isHovering ? floor.id : null)}
-                        onClick={() => onFloorClick(floor)}
+                        isHovered={!isDragging && hoveredFloor === floor.id}
+                        onHover={(isHovering) => !isDragging && setHoveredFloor(isHovering ? floor.id : null)}
+                        onClick={() => !isDragging && onFloorClick(floor)}
                     />
                 ))}
             </group>

@@ -24,7 +24,7 @@ function LoadingOverlay() {
     useEffect(() => {
         if (!active && progress === 100) {
             // Small delay to ensure smooth transition
-            const timer = setTimeout(() => setShow(false), 500);
+            const timer = setTimeout(() => setShow(false), 200);
             return () => clearTimeout(timer);
         }
     }, [active, progress]);
@@ -39,6 +39,7 @@ function InnerScene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
 
     // strongly type the ref to the actual OrbitControls instance
     const controlsRef = useRef<ThreeOrbitControls | null>(null);
+    const [isDragging, setIsDragging] = useState(false);
 
     useEffect(() => {
         const controls = controlsRef.current;
@@ -64,7 +65,12 @@ function InnerScene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
 
             <Suspense fallback={null}>
                 <group position={[-8, -2, 4]}>
-                    <Building modelPath={buildingModelPath} floors={floors} onFloorClick={onFloorClick} />
+                    <Building
+                        modelPath={buildingModelPath}
+                        floors={floors}
+                        onFloorClick={onFloorClick}
+                        isDragging={isDragging}
+                    />
                     <ContactShadows position={[0, -2, 0]} opacity={0.5} scale={20} blur={2.5} far={4.5} resolution={256} frames={1} />
                 </group>
             </Suspense>
@@ -74,10 +80,14 @@ function InnerScene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
                 ref={controlsRef}
                 enablePan={false}
                 enableZoom={true}
+                enableDamping={false}
+                rotateSpeed={0.5}
                 minPolarAngle={0.5}
                 maxPolarAngle={Math.PI / 2}
                 minDistance={15}
                 maxDistance={80}
+                onStart={() => setIsDragging(true)}
+                onEnd={() => setIsDragging(false)}
             />
         </>
     );
