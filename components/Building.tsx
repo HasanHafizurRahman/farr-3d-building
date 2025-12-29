@@ -23,12 +23,12 @@ export default function Building({ modelPath, floors, onFloorClick, isDragging =
             <primitive object={scene} scale={0.5} />
 
             {/* Interactive Hitboxes - positioned inside the building */}
-            <group position={[4, 2.6, -6]}>
+            <group position={[4, 2.2, -6]}>
                 {floors.map((floor, index) => (
                     <FloorHitbox
                         key={floor.id}
                         data={floor}
-                        position={[0, index * 1.4, 0]}
+                        position={[0, index * 1.5, 0]}
                         isHovered={!isDragging && hoveredFloor === floor.id}
                         onHover={(isHovering) => !isDragging && setHoveredFloor(isHovering ? floor.id : null)}
                         onClick={() => !isDragging && onFloorClick(floor)}
