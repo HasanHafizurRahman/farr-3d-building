@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Html, useCursor, useGLTF } from '@react-three/drei';
+import { Edges, Html, useCursor, useGLTF } from '@react-three/drei';
 import { FloorData } from '@/lib/data';
 import Image from 'next/image';
 
@@ -23,7 +23,7 @@ export default function Building({ modelPath, floors, onFloorClick, isDragging =
             <primitive object={scene} scale={0.5} />
 
             {/* Interactive Hitboxes - positioned inside the building */}
-            <group position={[2, 1.5, -3]}>
+            <group position={[5, 2.6, -5]}>
                 {floors.map((floor, index) => (
                     <FloorHitbox
                         key={floor.id}
@@ -52,7 +52,7 @@ function FloorHitbox({ data, position, isHovered, onHover, onClick }: FloorHitbo
 
     return (
         <group position={position}>
-            {/* Invisible Hitbox Mesh for interaction */}
+            {/* Transparent Hitbox Mesh with white border edges */}
             <mesh
                 onPointerOver={(e) => {
                     e.stopPropagation();
@@ -67,11 +67,17 @@ function FloorHitbox({ data, position, isHovered, onHover, onClick }: FloorHitbo
                     onClick();
                 }}
             >
-                <boxGeometry args={[2.5, 1.2, 2.5]} />
+                <boxGeometry args={[6.5, 1.2, 8.5]} />
                 <meshStandardMaterial
                     transparent
                     opacity={0}
                     depthWrite={false}
+                />
+                {/* White border edges - always visible */}
+                <Edges
+                    threshold={15}
+                    color={isHovered ? "#00ff00" : "#ffffff"}
+                    lineWidth={isHovered ? 2 : 1}
                 />
             </mesh>
 
@@ -90,7 +96,7 @@ function FloorHitbox({ data, position, isHovered, onHover, onClick }: FloorHitbo
                         />
                     </mesh>
                     {/* Right edge bar */}
-                    <mesh position={[1.3, 0, 0]}>
+                    <mesh position={[1.3, 5, 0]}>
                         <boxGeometry args={[0.06, 1.25, 2.6]} />
                         <meshStandardMaterial
                             color="#ffffff"
