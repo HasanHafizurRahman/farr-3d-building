@@ -34,7 +34,7 @@ function LoadingOverlay() {
     return <BuildingLoader />;
 }
 
-function InnerScene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
+function InnerScene({ buildingModelPath, floors, onFloorClick, showBlocks = true }: SceneProps & { showBlocks?: boolean }) {
     const { performance } = useThree();
 
     // strongly type the ref to the actual OrbitControls instance
@@ -70,6 +70,7 @@ function InnerScene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
                         floors={floors}
                         onFloorClick={onFloorClick}
                         isDragging={isDragging}
+                        showBlocks={showBlocks}
                     />
                     <ContactShadows position={[0, -2, 0]} opacity={0.5} scale={20} blur={2.5} far={4.5} resolution={256} frames={1} />
                 </group>
@@ -94,11 +95,45 @@ function InnerScene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
 }
 
 export default function Scene({ buildingModelPath, floors, onFloorClick }: SceneProps) {
+    const [showBlocks, setShowBlocks] = useState(true);
+
     return (
         <div className="w-full h-screen relative">
             <Canvas camera={{ position: [10, 20, 30], fov: 45 }} dpr={[1, 1.5]} shadows performance={{ min: 0.5 }}>
-                <InnerScene buildingModelPath={buildingModelPath} floors={floors} onFloorClick={onFloorClick} />
+                <InnerScene
+                    buildingModelPath={buildingModelPath}
+                    floors={floors}
+                    onFloorClick={onFloorClick}
+                    showBlocks={showBlocks}
+                />
             </Canvas>
+
+            {/* Show/Hide Blocks Toggle Buttons */}
+            <div className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg">
+                <p className="text-xs font-semibold text-gray-600 mb-2 text-center">Floor View</p>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setShowBlocks(true)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${showBlocks
+                                ? 'bg-green-500 text-white shadow-md shadow-green-500/30'
+                                : 'bg-gray-200 text-gray-600 hover:bg-green-100'
+                            }`}
+                    >
+                        <span className="w-2 h-2 rounded-full bg-current"></span>
+                        Show
+                    </button>
+                    <button
+                        onClick={() => setShowBlocks(false)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${!showBlocks
+                                ? 'bg-red-500 text-white shadow-md shadow-red-500/30'
+                                : 'bg-gray-200 text-gray-600 hover:bg-red-100'
+                            }`}
+                    >
+                        <span className="w-2 h-2 rounded-full bg-current"></span>
+                        Hide
+                    </button>
+                </div>
+            </div>
 
             {/* Custom Building Loader */}
             <LoadingOverlay />

@@ -10,9 +10,10 @@ interface BuildingProps {
     floors: FloorData[];
     onFloorClick: (floor: FloorData) => void;
     isDragging?: boolean;
+    showBlocks?: boolean;
 }
 
-export default function Building({ modelPath, floors, onFloorClick, isDragging = false }: BuildingProps) {
+export default function Building({ modelPath, floors, onFloorClick, isDragging = false, showBlocks = true }: BuildingProps) {
     const [hoveredFloor, setHoveredFloor] = useState<string | null>(null);
     // Enable Draco compression support
     const { scene } = useGLTF(modelPath, true) as any;
@@ -23,18 +24,20 @@ export default function Building({ modelPath, floors, onFloorClick, isDragging =
             <primitive object={scene} scale={0.5} />
 
             {/* Interactive Hitboxes - positioned inside the building */}
-            <group position={[4, 2.2, -6]}>
-                {floors.map((floor, index) => (
-                    <FloorHitbox
-                        key={floor.id}
-                        data={floor}
-                        position={[0, index * 1.5, 0]}
-                        isHovered={!isDragging && hoveredFloor === floor.id}
-                        onHover={(isHovering) => !isDragging && setHoveredFloor(isHovering ? floor.id : null)}
-                        onClick={() => !isDragging && onFloorClick(floor)}
-                    />
-                ))}
-            </group>
+            {showBlocks && (
+                <group position={[4, 2.2, -6]}>
+                    {floors.map((floor, index) => (
+                        <FloorHitbox
+                            key={floor.id}
+                            data={floor}
+                            position={[0, index * 1.5, 0]}
+                            isHovered={!isDragging && hoveredFloor === floor.id}
+                            onHover={(isHovering) => !isDragging && setHoveredFloor(isHovering ? floor.id : null)}
+                            onClick={() => !isDragging && onFloorClick(floor)}
+                        />
+                    ))}
+                </group>
+            )}
         </group>
     );
 }
