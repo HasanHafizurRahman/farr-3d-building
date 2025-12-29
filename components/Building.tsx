@@ -23,7 +23,7 @@ export default function Building({ modelPath, floors, onFloorClick, isDragging =
             <primitive object={scene} scale={0.5} />
 
             {/* Interactive Hitboxes - positioned inside the building */}
-            <group position={[5, 2.6, -5]}>
+            <group position={[4, 2.6, -6]}>
                 {floors.map((floor, index) => (
                     <FloorHitbox
                         key={floor.id}
