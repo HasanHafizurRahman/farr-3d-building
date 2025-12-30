@@ -111,10 +111,10 @@ export default function Home() {
           <div className={`hidden md:flex items-center gap-4 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
             <button
               onClick={() => router.push('/admin')}
-              className="relative group overflow-hidden bg-gradient-to-r from-black via-gray-900 to-black text-white px-7 py-3 rounded-xl font-bold transition-all hover:shadow-[0_0_40px_rgba(0,0,0,0.3)] hover-lift"
+              className="relative group overflow-hidden bg-gradient-to-r from-black via-gray-900 to-black text-white cursor-pointer px-7 py-3 rounded-xl font-bold transition-all hover:shadow-[0_0_40px_rgba(0,0,0,0.3)] hover-lift"
             >
               <span className="relative z-10 flex items-center gap-2">
-                Get Started
+                Login
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-amber-600/20 to-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </button>

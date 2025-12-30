@@ -110,13 +110,13 @@ export default function Scene({ buildingModelPath, floors, onFloorClick }: Scene
 
             {/* Show/Hide Blocks Toggle Buttons */}
             <div className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg">
-                <p className="text-xs font-semibold text-gray-600 mb-2 text-center">Floor View</p>
+                <p className="text-xs font-semibold text-gray-600 mb-2 text-center">Floor Blocks</p>
                 <div className="flex gap-2">
                     <button
                         onClick={() => setShowBlocks(true)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${showBlocks
-                                ? 'bg-green-500 text-white shadow-md shadow-green-500/30'
-                                : 'bg-gray-200 text-gray-600 hover:bg-green-100'
+                        className={`px-3 py-1.5 cursor-pointer rounded-full text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${showBlocks
+                            ? 'bg-green-500 text-white shadow-md shadow-green-500/30'
+                            : 'bg-gray-200 text-gray-600 hover:bg-green-100'
                             }`}
                     >
                         <span className="w-2 h-2 rounded-full bg-current"></span>
@@ -124,9 +124,9 @@ export default function Scene({ buildingModelPath, floors, onFloorClick }: Scene
                     </button>
                     <button
                         onClick={() => setShowBlocks(false)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${!showBlocks
-                                ? 'bg-red-500 text-white shadow-md shadow-red-500/30'
-                                : 'bg-gray-200 text-gray-600 hover:bg-red-100'
+                        className={`px-3 py-1.5 cursor-pointer rounded-full text-xs font-medium transition-all duration-200 flex items-center gap-1.5 ${!showBlocks
+                            ? 'bg-red-500 text-white shadow-md shadow-red-500/30'
+                            : 'bg-gray-200 text-gray-600 hover:bg-red-100'
                             }`}
                     >
                         <span className="w-2 h-2 rounded-full bg-current"></span>
