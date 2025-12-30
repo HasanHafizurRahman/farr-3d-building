@@ -7,6 +7,7 @@ import { api, FloorData, BuildingData } from '@/lib/api';
 import { useGLTF } from '@react-three/drei';
 import { useRouter } from 'next/navigation';
 import { MapPin, Calendar, Layers, ArrowRight, Phone, Mail, Star, Shield, Award, Gem, ChevronDown, Linkedin, Twitter, Instagram, Facebook } from 'lucide-react';
+import FloorDetailSidebar from '@/components/FloorDetailSidebar';
 
 export default function Home() {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function Home() {
   const [selectedBuildingId, setSelectedBuildingId] = useState('');
   const [isVisible, setIsVisible] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [selectedFloor, setSelectedFloor] = useState<FloorData | null>(null);
 
   useEffect(() => {
     api.getBuildings()
@@ -36,7 +38,11 @@ export default function Home() {
   const selectedBuilding = buildingsData.find(b => b.id === selectedBuildingId) || buildingsData[0];
 
   const handleFloorClick = (floor: FloorData) => {
-    router.push(`/floor/${floor.id}`);
+    setSelectedFloor(floor);
+  };
+
+  const handleCloseSidebar = () => {
+    setSelectedFloor(null);
   };
 
   const featureIcons = [Star, Shield, Award, Gem];
@@ -176,7 +182,7 @@ export default function Home() {
               <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200/50">
                 <p className="text-xs text-amber-800 font-medium flex items-center gap-2">
                   <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
-                  Hover over floors in the 3D model to explore
+                  Click on floors in the 3D model to explore
                 </p>
               </div>
             </div>
@@ -407,6 +413,14 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Floor Detail Sidebar */}
+      <FloorDetailSidebar
+        floor={selectedFloor}
+        building={selectedBuilding}
+        isOpen={selectedFloor !== null}
+        onClose={handleCloseSidebar}
+      />
     </main>
   );
 }
